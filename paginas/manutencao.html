@@ -1,0 +1,711 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ECOLLTRUCK - Controle de Manutenção | Sustentare Saneamento</title>
+  <link rel="stylesheet" href="../styles/style.css">
+  <style>
+    /* ==========================================================================
+       ECOLLTRUCK - DESIGN 
+       ========================================================================== */
+
+    :root, [data-theme="light"] {
+      --bg-main: #f4f5f7;
+      --bg-header: #ffffff;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f8f9fa;
+      --bg-input: #f1f3f5;
+      --border-subtle: #e2e8f0;
+      --border-accent: #cbd5e1;
+
+      --accent-primary: #1e293b;
+      --accent-text: #0f172a;
+      --accent-bg: #e2e8f0;
+
+      --text-heading: #0f172a;
+      --text-body: #334155;
+      --text-muted: #64748b;
+
+      --status-op: #2563eb;
+      --danger-text: #dc2626;
+      --danger-bg: #fef2f2;
+      --warning-text: #d97706;
+      --warning-bg: #fffbeb;
+      --success-text: #166534;
+      --success-bg: #f0fdf4;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-body);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      padding-top: 60px;
+    }
+
+    /* ── BARRA SUPERIOR FIXA NO TOPO ─────────────────────────────────────── */
+    .top-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background-color: var(--bg-header);
+      border-bottom: 1px solid var(--border-subtle);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+    }
+
+    .top-header-inner {
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+      text-decoration: none;
+    }
+
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+      background-color: var(--accent-bg);
+      border: 1px solid var(--border-accent);
+      border-radius: 6px;
+      display: grid;
+      place-items: center;
+      color: var(--text-heading);
+      flex-shrink: 0;
+    }
+
+    .brand-text strong {
+      display: block;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-heading);
+      letter-spacing: -0.2px;
+      line-height: 1.1;
+    }
+
+    .brand-text small {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .centered-nav {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      overflow-x: auto;
+      padding: 2px;
+      scrollbar-width: none;
+    }
+
+    .centered-nav::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-body);
+      text-decoration: none;
+      white-space: nowrap;
+      transition: background-color 0.15s ease, color 0.15s ease;
+    }
+
+    .nav-link:hover {
+      background-color: var(--bg-card-hover);
+      color: var(--text-heading);
+    }
+
+    .nav-link.active {
+      background-color: var(--accent-bg);
+      color: var(--text-heading);
+      border: 1px solid var(--border-accent);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .profile-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 3px 8px 3px 3px;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 999px;
+    }
+
+    .avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background-color: var(--accent-primary);
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 700;
+      display: grid;
+      place-items: center;
+    }
+
+    .profile-info strong {
+      font-size: 11px;
+      color: var(--text-heading);
+      display: block;
+      line-height: 1;
+    }
+
+    .icon-button {
+      width: 32px;
+      height: 32px;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      color: var(--text-body);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: background-color 0.15s ease;
+    }
+
+    .icon-button:hover {
+      background-color: var(--bg-card-hover);
+      color: var(--text-heading);
+    }
+
+    /* ── CONTEÚDO PRINCIPAL ───────────────────────────────────────────────── */
+    .main-wrapper {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .page-title-block {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .page-title-block h1 {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text-heading);
+      letter-spacing: -0.3px;
+    }
+
+    .page-title-block p {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Cards Métricas */
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .metric-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .metric-card h3 {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      margin-bottom: 6px;
+    }
+
+    .metric-card strong {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--text-heading);
+      line-height: 1;
+    }
+
+    .metric-card small {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .success-text { color: var(--success-text) !important; }
+    .warning-text { color: var(--warning-text) !important; }
+    .danger-text { color: var(--danger-text) !important; }
+
+    /* Painel e Tabela */
+    .panel {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 20px;
+    }
+
+    .panel h2 {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-heading);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background-color: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 8px 12px;
+      margin-bottom: 16px;
+    }
+
+    .search-box input {
+      border: none;
+      background: transparent;
+      width: 100%;
+      outline: none;
+      font-size: 13px;
+      color: var(--text-heading);
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th {
+      background-color: var(--bg-input);
+      padding: 10px 14px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: 13px;
+      color: var(--text-body);
+    }
+
+    tr:hover td {
+      background-color: var(--bg-card-hover);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .badge.active, .badge.em-dia {
+      background-color: var(--success-bg);
+      color: var(--success-text);
+    }
+
+    .badge.warning, .badge.programada {
+      background-color: var(--warning-bg);
+      color: var(--warning-text);
+    }
+
+    .badge.danger, .badge.vencida {
+      background-color: var(--danger-bg);
+      color: var(--danger-text);
+    }
+
+    .actions-cell {
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .btn-action {
+      background: none;
+      border: 1px solid var(--border-subtle);
+      background-color: var(--bg-card);
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+      padding: 4px 10px;
+      border-radius: 4px;
+      color: var(--accent-primary);
+      transition: background-color 0.15s ease;
+    }
+
+    .btn-action:hover {
+      background-color: var(--bg-input);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 24px;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    /* ── MODAL DE ATUALIZAÇÃO ────────────────────────────────────────────── */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(15, 23, 42, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 2000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .modal-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-dialog {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 24px;
+      width: 100%;
+      max-width: 520px;
+      position: relative;
+    }
+
+    .modal-dialog h2 {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text-heading);
+      margin-bottom: 20px;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      border: none;
+      background: none;
+      font-size: 16px;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .field.full-width {
+      grid-column: span 2;
+    }
+
+    .field label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-heading);
+    }
+
+    .field input, .field select {
+      height: 38px;
+      padding: 0 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border-subtle);
+      background-color: var(--bg-input);
+      color: var(--text-heading);
+      outline: none;
+      font-size: 13px;
+    }
+
+    .field input:focus, .field select:focus {
+      border-color: var(--accent-primary);
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background-color: var(--accent-primary);
+      color: #ffffff;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 10px;
+      transition: opacity 0.15s ease;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.9;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: var(--accent-primary);
+      color: #ffffff;
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+      z-index: 3000;
+    }
+
+    .toast.show {
+      opacity: 1;
+    }
+
+    @media (max-width: 768px) {
+      .top-header { padding: 0 12px; }
+      .main-wrapper { padding: 16px 12px; }
+      .metric-grid { grid-template-columns: 1fr; }
+      .form-grid { grid-template-columns: 1fr; }
+      .field.full-width { grid-column: span 1; }
+      .profile-info { display: none; }
+    }
+  </style>
+</head>
+<body data-page="maintenance" data-auth="true" data-roles="Administrador">
+
+  <!-- BARRA SUPERIOR FIXA UNIFICADA -->
+  <header class="top-header">
+    <div class="top-header-inner">
+      
+      <a class="header-brand" href="../index.html">
+        <div class="brand-icon">
+          <span data-icon="truck"></span>
+        </div>
+        <div class="brand-text">
+          <strong>ECOLLTRUCK</strong>
+          <small>Sustentare Saneamento</small>
+        </div>
+      </a>
+
+      <nav class="centered-nav" aria-label="Menu principal">
+        <a class="nav-link" href="../index.html" data-roles="Administrador">Dashboard</a>
+        <a class="nav-link" href="usuario.html" data-roles="Administrador">Usuários</a>
+        <a class="nav-link" href="caminhoes.html" data-roles="Administrador">Caminhões</a>
+        <a class="nav-link" href="monitoramento.html" data-roles="Administrador,Operador">Monitoramento</a>
+        <a class="nav-link active" href="manutencao.html" aria-current="page" data-roles="Administrador">Manutenção</a>
+        <a class="nav-link" href="rotas.html" data-roles="Administrador,Motorista">Rotas</a>
+        <a class="nav-link" href="registro-peso.html" data-roles="Administrador,Motorista">Registro de Peso</a>
+        <a class="nav-link" href="bairros.html" data-roles="Administrador">Bairros</a>
+        <a class="nav-link" href="relatorios.html" data-roles="Administrador,Operador">Relatórios</a>
+        <a class="nav-link" href="logs.html" data-roles="Administrador">Logs</a>
+        <a class="nav-link" href="configuracoes.html" data-roles="Administrador">Configurações</a>
+      </nav>
+
+      <div class="header-actions">
+        <div class="profile-chip">
+          <span class="avatar">JS</span>
+          <div class="profile-info">
+            <strong>João Silva</strong>
+          </div>
+        </div>
+
+        <button class="icon-button" type="button" data-logout aria-label="Sair">
+          <span data-icon="log-out"></span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ÁREA PRINCIPAL DA PÁGINA -->
+  <main class="main-wrapper">
+    
+    <div class="page-title-block">
+      <div>
+        <h1>Controle de Manutenção</h1>
+        <p>Acompanhe a manutenção preventiva, revisões e trocas de componentes da frota</p>
+      </div>
+    </div>
+
+    <!-- CARDS DE MÉTRICAS -->
+    <section class="metric-grid" aria-label="Resumo de manutenção">
+      <article class="metric-card">
+        <h3>Em Dia</h3>
+        <strong class="success-text" id="upToDateCount">0</strong>
+        <small>Caminhões sem pendências</small>
+      </article>
+
+      <article class="metric-card">
+        <h3>Programadas</h3>
+        <strong class="warning-text" id="scheduledCount">0</strong>
+        <small>Revisões nos próximos dias</small>
+      </article>
+
+      <article class="metric-card">
+        <h3>Vencidas</h3>
+        <strong class="danger-text" id="overdueCount">0</strong>
+        <small>Requerem atenção imediata</small>
+      </article>
+    </section>
+
+    <!-- PAINEL DA TABELA -->
+    <section class="panel">
+      <h2> Status de Manutenção dos Caminhões</h2>
+
+      <div class="search-box">
+        <span data-icon="search"></span>
+        <input id="maintenanceSearch" type="search" placeholder="Buscar por caminhão ou status...">
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Caminhão</th>
+              <th>Última Manutenção</th>
+              <th>Próxima Revisão</th>
+              <th>Troca de Pneus</th>
+              <th>Revisão Balança</th>
+              <th>Troca de Óleo</th>
+              <th>Status</th>
+              <th class="actions-cell">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="maintenanceTable">
+            <!-- Conteúdo dinâmico via JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <p class="empty-state" id="emptyMaintenanceState" hidden>Nenhum registro de manutenção encontrado.</p>
+    </section>
+
+  </main>
+
+  <!-- MODAL DE EDIÇÃO DA MANUTENÇÃO -->
+  <div class="modal-backdrop" id="maintenanceModal" aria-hidden="true">
+    <div class="modal-dialog" role="dialog" aria-labelledby="maintenanceModalTitle">
+      <button class="modal-close" id="closeMaintenanceModal" type="button" aria-label="Fechar">✕</button>
+      <h2 id="maintenanceModalTitle">Atualizar Manutenção</h2>
+
+      <form id="maintenanceForm" novalidate>
+        <input type="hidden" id="editingTruckKey">
+
+        <div class="field full-width">
+          <label for="truckLabel">Caminhão</label>
+          <input id="truckLabel" type="text" readonly style="opacity: 0.7; cursor: not-allowed;">
+        </div>
+
+        <div class="form-grid">
+          <div class="field">
+            <label for="lastMaintenance">Última Manutenção</label>
+            <input id="lastMaintenance" type="date" required>
+          </div>
+
+          <div class="field">
+            <label for="nextRevision">Próxima Revisão</label>
+            <input id="nextRevision" type="date" required>
+          </div>
+
+          <div class="field">
+            <label for="tireChange">Troca de Pneus</label>
+            <input id="tireChange" type="date">
+          </div>
+
+          <div class="field">
+            <label for="scaleRevision">Revisão Balança</label>
+            <input id="scaleRevision" type="date">
+          </div>
+
+          <div class="field">
+            <label for="oilChange">Troca de Óleo</label>
+            <input id="oilChange" type="date">
+          </div>
+
+          <div class="field">
+            <label for="maintenanceStatus">Status Geral</label>
+            <select id="maintenanceStatus" required>
+              <option value="Em dia">Em dia</option>
+              <option value="Programada">Programada</option>
+              <option value="Vencida">Vencida</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary" id="saveMaintenance">
+          <span>Salvar Manutenção</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- SCRIPTS DO SISTEMA -->
+  <script src="../scripts/firebase.js"></script>
+  <script src="../scripts/app.js"></script>
+  <script src="../scripts/manutencao.js"></script>
+</body>
+</html>

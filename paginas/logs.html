@@ -1,0 +1,797 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ECOLLTRUCK - Logs do Sistema | Sustentare Saneamento</title>
+  <link rel="stylesheet" href="../styles/style.css">
+  <style>
+    /* ==========================================================================
+       ECOLLTRUCK - DESIGN 
+       ========================================================================== */
+
+    :root, [data-theme="light"] {
+      --bg-main: #f4f5f7;
+      --bg-header: #ffffff;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f8f9fa;
+      --bg-input: #f1f3f5;
+      --border-subtle: #e2e8f0;
+      --border-accent: #cbd5e1;
+
+      --accent-primary: #1e293b;
+      --accent-text: #0f172a;
+      --accent-bg: #e2e8f0;
+
+      --text-heading: #0f172a;
+      --text-body: #334155;
+      --text-muted: #64748b;
+
+      --status-op: #2563eb;
+      --danger-text: #dc2626;
+      --danger-bg: #fef2f2;
+      --warning-text: #d97706;
+      --warning-bg: #fffbeb;
+      --success-text: #166534;
+      --success-bg: #f0fdf4;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-body);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      padding-top: 60px;
+    }
+
+    /* ── BARRA SUPERIOR FIXA NO TOPO ─────────────────────────────────────── */
+    .top-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background-color: var(--bg-header);
+      border-bottom: 1px solid var(--border-subtle);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+    }
+
+    .top-header-inner {
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+      text-decoration: none;
+    }
+
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+      background-color: var(--accent-bg);
+      border: 1px solid var(--border-accent);
+      border-radius: 6px;
+      display: grid;
+      place-items: center;
+      color: var(--text-heading);
+      flex-shrink: 0;
+    }
+
+    .brand-text strong {
+      display: block;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-heading);
+      letter-spacing: -0.2px;
+      line-height: 1.1;
+    }
+
+    .brand-text small {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .centered-nav {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      overflow-x: auto;
+      padding: 2px;
+      scrollbar-width: none;
+    }
+
+    .centered-nav::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-body);
+      text-decoration: none;
+      white-space: nowrap;
+      transition: background-color 0.15s ease, color 0.15s ease;
+    }
+
+    .nav-link:hover {
+      background-color: var(--bg-card-hover);
+      color: var(--text-heading);
+    }
+
+    .nav-link.active {
+      background-color: var(--accent-bg);
+      color: var(--text-heading);
+      border: 1px solid var(--border-accent);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .profile-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 3px 8px 3px 3px;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 999px;
+    }
+
+    .avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background-color: var(--accent-primary);
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 700;
+      display: grid;
+      place-items: center;
+    }
+
+    .profile-info strong {
+      font-size: 11px;
+      color: var(--text-heading);
+      display: block;
+      line-height: 1;
+    }
+
+    .icon-button {
+      width: 32px;
+      height: 32px;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      color: var(--text-body);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: background-color 0.15s ease;
+    }
+
+    .icon-button:hover {
+      background-color: var(--bg-card-hover);
+      color: var(--text-heading);
+    }
+
+    /* ── CONTEÚDO PRINCIPAL ───────────────────────────────────────────────── */
+    .main-wrapper {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .page-title-block {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .page-title-block h1 {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text-heading);
+      letter-spacing: -0.3px;
+    }
+
+    .page-title-block p {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-heading);
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--bg-input);
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background-color: var(--accent-primary);
+      color: #ffffff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      width: 100%;
+      transition: opacity 0.15s ease;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.9;
+    }
+
+    /* Cards Métricas */
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .metric-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .metric-card h3 {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      margin-bottom: 6px;
+    }
+
+    .metric-card strong {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--text-heading);
+      line-height: 1;
+    }
+
+    .metric-card small {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .danger-text { color: var(--danger-text) !important; }
+    .warning-text { color: var(--warning-text) !important; }
+    .success-text { color: var(--success-text) !important; }
+
+    /* Layout do Painel Principal + Detalhes */
+    .logs-layout {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .panel {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 20px;
+    }
+
+    /* Barra de Filtros Integrada */
+    .logs-filter-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr auto;
+      gap: 10px;
+      align-items: end;
+      margin-bottom: 16px;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background-color: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 0 12px;
+      height: 38px;
+    }
+
+    .search-box input {
+      border: none;
+      background: transparent;
+      width: 100%;
+      outline: none;
+      font-size: 13px;
+      color: var(--text-heading);
+    }
+
+    .field-compact {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .field-compact span {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .field-compact select {
+      height: 38px;
+      padding: 0 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border-subtle);
+      background-color: var(--bg-input);
+      color: var(--text-heading);
+      outline: none;
+      font-size: 12px;
+    }
+
+    /* Tabela */
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th {
+      background-color: var(--bg-input);
+      padding: 10px 12px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    td {
+      padding: 12px;
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: 12px;
+      color: var(--text-body);
+    }
+
+    tr:hover td {
+      background-color: var(--bg-card-hover);
+    }
+
+    tr.selected td {
+      background-color: var(--bg-input);
+    }
+
+    /* Badges de Status e Nível */
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .badge.critico, .badge.danger {
+      background-color: var(--danger-bg);
+      color: var(--danger-text);
+    }
+
+    .badge.atencao, .badge.warning {
+      background-color: var(--warning-bg);
+      color: var(--warning-text);
+    }
+
+    .badge.sucesso, .badge.success {
+      background-color: var(--success-bg);
+      color: var(--success-text);
+    }
+
+    .badge.informacao, .badge.neutral {
+      background-color: var(--bg-input);
+      color: var(--text-muted);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .btn-action-sm {
+      background: none;
+      border: 1px solid var(--border-subtle);
+      background-color: var(--bg-card);
+      font-weight: 700;
+      font-size: 11px;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 4px;
+      color: var(--accent-primary);
+      transition: background-color 0.15s ease;
+    }
+
+    .btn-action-sm:hover {
+      background-color: var(--bg-input);
+    }
+
+    /* Painel Lateral de Detalhes */
+    .log-detail-panel h2 {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-heading);
+      margin-bottom: 16px;
+    }
+
+    .log-detail-empty {
+      text-align: center;
+      padding: 32px 16px;
+      color: var(--text-muted);
+    }
+
+    .log-detail-empty strong {
+      display: block;
+      font-size: 13px;
+      color: var(--text-heading);
+      margin-bottom: 4px;
+    }
+
+    .log-detail-empty small {
+      font-size: 11px;
+    }
+
+    .log-detail-head {
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+    }
+
+    .log-detail-head strong {
+      display: block;
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-heading);
+      margin-top: 8px;
+    }
+
+    .log-detail-head small {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .log-detail-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .log-detail-list div {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .log-detail-list dt {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      letter-spacing: 0.3px;
+    }
+
+    .log-detail-list dd {
+      font-size: 12px;
+      color: var(--text-heading);
+      font-weight: 600;
+      word-break: break-word;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 24px;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: var(--accent-primary);
+      color: #ffffff;
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+      z-index: 3000;
+    }
+
+    .toast.show {
+      opacity: 1;
+    }
+
+    @media (max-width: 1100px) {
+      .metric-grid { grid-template-columns: repeat(2, 1fr); }
+      .logs-layout { grid-template-columns: 1fr; }
+      .logs-filter-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      .top-header { padding: 0 12px; }
+      .main-wrapper { padding: 16px 12px; }
+      .metric-grid { grid-template-columns: 1fr; }
+      .logs-filter-grid { grid-template-columns: 1fr; }
+      .profile-info { display: none; }
+    }
+  </style>
+</head>
+<body data-page="logs" data-auth="true" data-roles="Administrador">
+
+  <!-- BARRA SUPERIOR FIXA UNIFICADA -->
+  <header class="top-header">
+    <div class="top-header-inner">
+      
+      <a class="header-brand" href="../index.html">
+        <div class="brand-icon">
+          <span data-icon="truck"></span>
+        </div>
+        <div class="brand-text">
+          <strong>ECOLLTRUCK</strong>
+          <small>Sustentare Saneamento</small>
+        </div>
+      </a>
+
+      <nav class="centered-nav" aria-label="Menu principal">
+        <a class="nav-link" href="../index.html" data-roles="Administrador">Dashboard</a>
+        <a class="nav-link" href="usuario.html" data-roles="Administrador">Usuários</a>
+        <a class="nav-link" href="caminhoes.html" data-roles="Administrador">Caminhões</a>
+        <a class="nav-link" href="monitoramento.html" data-roles="Administrador,Operador">Monitoramento</a>
+        <a class="nav-link" href="manutencao.html" data-roles="Administrador">Manutenção</a>
+        <a class="nav-link" href="rotas.html" data-roles="Administrador,Motorista">Rotas</a>
+        <a class="nav-link" href="registro-peso.html" data-roles="Administrador,Motorista">Registro de Peso</a>
+        <a class="nav-link" href="bairros.html" data-roles="Administrador">Bairros</a>
+        <a class="nav-link" href="relatorios.html" data-roles="Administrador,Operador">Relatórios</a>
+        <a class="nav-link active" href="logs.html" aria-current="page" data-roles="Administrador">Logs</a>
+        <a class="nav-link" href="configuracoes.html" data-roles="Administrador">Configurações</a>
+      </nav>
+
+      <div class="header-actions">
+        <div class="profile-chip">
+          <span class="avatar">JS</span>
+          <div class="profile-info">
+            <strong>João Silva</strong>
+          </div>
+        </div>
+
+        <button class="icon-button" type="button" data-logout aria-label="Sair">
+          <span data-icon="log-out"></span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ÁREA PRINCIPAL DA PÁGINA -->
+  <main class="main-wrapper">
+    
+    <div class="page-title-block">
+      <div>
+        <h1>Logs do Sistema</h1>
+        <p>Acompanhe ações de usuários, leituras de sensores ESP32, sincronizações e alertas operacionais</p>
+      </div>
+      <button class="btn-secondary" type="button" id="exportLogs">
+        <span>📑 Exportar CSV</span>
+      </button>
+    </div>
+
+    <!-- CARDS DE MÉTRICAS -->
+    <section class="metric-grid" aria-label="Resumo de logs">
+      <article class="metric-card">
+        <h3>Eventos Gravados</h3>
+        <strong id="todayLogs">0</strong>
+        <small>Registros no período</small>
+      </article>
+
+      <article class="metric-card">
+        <h3>Alertas Críticos</h3>
+        <strong class="danger-text" id="criticalLogs">0</strong>
+        <small>Requerem verificação</small>
+      </article>
+
+      <article class="metric-card">
+        <h3>Eventos de Sensor</h3>
+        <strong class="warning-text" id="sensorLogs">0</strong>
+        <small>Sensores</small>
+      </article>
+
+      <article class="metric-card">
+        <h3>Sincronizações</h3>
+        <strong class="success-text" id="syncLogs">0</strong>
+        <small>Transmissões de dados salvas</small>
+      </article>
+    </section>
+
+    <!-- ÁREA PRINCIPAL COM TABELA E PAINEL DETALHE -->
+    <section class="logs-layout">
+      
+      <!-- PAINEL DA TABELA COM FILTROS -->
+      <article class="panel">
+        
+        <div class="logs-filter-grid">
+          
+          <!-- AQUI ESTÁ A BARRA DE BUSCA MODIFICADA COM SVG -->
+          <div class="search-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px; color: var(--text-muted); flex-shrink: 0;">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input id="logSearch" type="search" placeholder="Buscar por caminhão ou status...">
+          </div>
+
+          <label class="field-compact">
+            <span>Nível</span>
+            <select id="logLevelFilter">
+              <option value="Todos">Todos</option>
+              <option value="Crítico">Crítico</option>
+              <option value="Atenção">Atenção</option>
+              <option value="Sucesso">Sucesso</option>
+              <option value="Informação">Informação</option>
+            </select>
+          </label>
+
+          <label class="field-compact">
+            <span>Origem</span>
+            <select id="logSourceFilter">
+              <option value="Todas">Todas</option>
+              <option value="ESP32">ESP32</option>
+              <option value="Sistema">Sistema</option>
+              <option value="Usuários">Usuários</option>
+              <option value="Rotas">Rotas</option>
+              <option value="Firebase">Firebase</option>
+            </select>
+          </label>
+
+          <label class="field-compact">
+            <span>Período</span>
+            <select id="logPeriodFilter">
+              <option value="Todos">Todos</option>
+              <option value="Hoje">Hoje</option>
+              <option value="Semana">Últimos 7 dias</option>
+            </select>
+          </label>
+
+          <button class="btn-secondary" type="button" id="clearLogFilters" style="height: 38px;">
+            <span>Limpar</span>
+          </button>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Data / Hora</th>
+                <th>Nível</th>
+                <th>Origem</th>
+                <th>Evento</th>
+                <th>Responsável</th>
+                <th>Status</th>
+                <th style="text-align: right;">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="logsTable">
+              <!-- Registros dinâmicos via JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <p class="empty-state" id="emptyLogsState" hidden>Nenhum log encontrado para os filtros selecionados.</p>
+      </article>
+
+      <!-- PAINEL LATERAL DE DETALHES -->
+      <aside class="panel log-detail-panel">
+        <h2> Detalhes da Ocorrência</h2>
+
+        <div class="log-detail-empty" id="logDetailEmpty">
+          <strong>Selecione um registro</strong>
+          <small>Clique no botão "Ver Detalhes" de qualquer linha da tabela para visualizar o histórico completo.</small>
+        </div>
+
+        <div class="log-detail-content" id="logDetailContent" hidden>
+          <div class="log-detail-head">
+            <span class="badge neutral" id="detailLevel">Informação</span>
+            <strong id="detailEvent">Evento Operacional</strong>
+            <small id="detailDate">08/10/2026 14:30</small>
+          </div>
+
+          <dl class="log-detail-list">
+            <div>
+              <dt>Origem</dt>
+              <dd id="detailSource">ESP32 / Telemetria</dd>
+            </div>
+            <div>
+              <dt>Responsável / Dispositivo</dt>
+              <dd id="detailActor">Modulo_01 (Truck 02)</dd>
+            </div>
+            <div>
+              <dt>Status de Revisão</dt>
+              <dd id="detailStatus">Pendente</dd>
+            </div>
+            <div>
+              <dt>Descrição do Evento</dt>
+              <dd id="detailDescription">Sincronização de pesagem efetuada com sucesso via sensor na caçamba.</dd>
+            </div>
+          </dl>
+
+          <button class="btn-primary" type="button" id="markReviewed">
+            <span>✓ Marcar como Revisado</span>
+          </button>
+        </div>
+      </aside>
+
+    </section>
+
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- SCRIPTS DO SISTEMA -->
+  <script src="../scripts/firebase.js"></script>
+  <script src="../scripts/app.js"></script>
+  <script src="../scripts/logs.js"></script>
+</body>
+</html>

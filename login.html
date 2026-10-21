@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ECOLLTRUCK - Sustentare Saneamento</title>
+  <link rel="stylesheet" href="styles/style.css">
+  <style>
+                                  /* ==========================================================================
+                                                             ECOLLTRUCK - TELA DE LOGIN 
+                                  ========================================================================== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: #090e09;
+      color: #e2e8e2;
+      min-height: 100vh;
+      display: flex;
+      align-items: stretch;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ── LADO ESQUERDO: FRASE PRINCIPAL + COPYRIGHT NA PARTE DE BAIXO ─────── */
+    .hero-container {
+      flex: 1;
+      padding: 64px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      background: radial-gradient(circle at 20% 40%, rgba(46, 74, 33, 0.15) 0%, transparent 60%);
+    }
+
+    .hero-main-content {
+      max-width: 560px;
+      margin: auto 0;
+    }
+
+    .hero-title {
+      font-size: 42px;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.2;
+      letter-spacing: -1px;
+    }
+
+    .hero-title span {
+      color: #92e06b;
+    }
+
+    .hero-footer {
+      font-size: 12px;
+      color: #526352;
+      letter-spacing: 0.2px;
+    }
+
+    /* ── LADO DIREITO: PAINEL DE LOGIN COM MARCA AMPLIADA ────────────────── */
+    .login-sidebar {
+      width: 100%;
+      max-width: 440px;
+      min-height: 100vh;
+      background-color: #111a11;
+      border-left: 1px solid #202d20;
+      padding: 48px 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      box-shadow: -10px 0 30px rgba(0, 0, 0, 0.3);
+      flex-shrink: 0;
+    }
+
+    .brand-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 36px;
+    }
+
+    /* Ícone ampliado */
+    .brand-icon {
+      width: 52px;
+      height: 52px;
+      background-color: #2e4a21;
+      border: 1px solid #3e632d;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      color: #92e06b;
+      flex-shrink: 0;
+      box-shadow: 0 4px 14px rgba(46, 74, 33, 0.3);
+    }
+
+    /* Nome ECOLLTRUCK ampliado */
+    .brand-title {
+      font-size: 24px;
+      font-weight: 900;
+      color: #ffffff;
+      letter-spacing: -0.5px;
+      line-height: 1.1;
+    }
+
+    .form-section {
+      width: 100%;
+    }
+
+    .auth-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+
+    .auth-subtitle {
+      font-size: 13px;
+      color: #7a8c78;
+      margin-bottom: 32px;
+    }
+
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field-group label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #c0ccc0;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-wrapper input {
+      width: 100%;
+      height: 48px;
+      background-color: #172117;
+      border: 1px solid #253425;
+      border-radius: 8px;
+      padding: 0 40px 0 14px;
+      color: #ffffff;
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+
+    .input-wrapper input::placeholder {
+      color: #4f614f;
+    }
+
+    .input-wrapper input:focus {
+      border-color: #4d7a38;
+      box-shadow: 0 0 0 3px rgba(77, 122, 56, 0.15);
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 10px;
+      background: none;
+      border: none;
+      color: #617360;
+      cursor: pointer;
+      padding: 6px;
+      display: grid;
+      place-items: center;
+      border-radius: 4px;
+    }
+
+    .password-toggle:hover {
+      color: #c0ccc0;
+    }
+
+    .login-error {
+      font-size: 12px;
+      font-weight: 600;
+      color: #ff6b6b;
+      min-height: 18px;
+    }
+
+    .login-error:empty {
+      display: none;
+    }
+
+    .btn-submit {
+      width: 100%;
+      height: 48px;
+      background-color: #3b5e28;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background-color 0.15s ease;
+      margin-top: 6px;
+    }
+
+    .btn-submit:hover {
+      background-color: #304d20;
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: #ffffff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .btn-submit.is-loading .spinner {
+      display: block;
+    }
+
+    @media (max-width: 900px) {
+      .hero-container {
+        display: none;
+      }
+      .login-sidebar {
+        max-width: 100%;
+        border-left: none;
+        padding: 32px 24px;
+      }
+    }
+  </style>
+</head>
+<body data-auth-page="true">
+
+  <!-- LADO ESQUERDO: FRASE PRINCIPAL E COPYRIGHT EM BAIXO -->
+  <main class="hero-container">
+    <div class="hero-main-content">
+      <h1 class="hero-title">
+        Gestão e monitoramento da <span>coleta urbana</span>, para um melhor ambiente
+      </h1>
+    </div>
+
+    <footer class="hero-footer">
+      © ecolltruck S/A • Todos os direitos reservados.
+    </footer>
+  </main>
+
+  <!-- LADO DIREITO: PAINEL DE LOGIN -->
+  <aside class="login-sidebar">
+    <header class="brand-header">
+      <div class="brand-icon">
+        <span data-icon="truck"></span>
+      </div>
+      <div class="brand-title">
+        ECOLLTRUCK
+      </div>
+    </header>
+
+    <div class="form-section">
+      <h1 class="auth-title">Entrar no sistema</h1>
+      <p class="auth-subtitle">Informe seu e-mail e senha para continuar</p>
+
+      <form id="loginForm" class="auth-form" novalidate>
+        <div class="field-group">
+          <label for="loginEmail">E-mail</label>
+          <div class="input-wrapper">
+            <input
+              id="loginEmail"
+              type="email"
+              placeholder="email@ecolltruck.com"
+              autocomplete="email"
+              required
+            >
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="loginPassword">Senha</label>
+          <div class="input-wrapper">
+            <input
+              id="loginPassword"
+              type="password"
+              placeholder="••••••••"
+              autocomplete="current-password"
+              required
+            >
+            <button class="password-toggle" type="button" data-password-toggle aria-label="Mostrar senha">
+              <span data-icon="lock"></span>
+            </button>
+          </div>
+        </div>
+
+        <p class="login-error" id="loginError" role="alert"></p>
+
+        <button type="submit" id="loginSubmit" class="btn-submit">
+          <span>Entrar no sistema</span>
+          <div class="spinner"></div>
+        </button>
+      </form>
+    </div>
+  </aside>
+
+  <!-- Scripts -->
+  <script src="scripts/firebase.js"></script>
+  <script src="scripts/app.js"></script>
+  <script src="scripts/login.js"></script>
+</body>
+</html>

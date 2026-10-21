@@ -1,0 +1,818 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ECOLLTRUCK - Configurações do Sistema | Sustentare Saneamento</title>
+  <link rel="stylesheet" href="../styles/style.css">
+  <style>
+    /* ==========================================================================
+       ECOLLTRUCK - DESIGN CORPORATIVO BRANCO CLEAN (PADRÃO UNIFICADO)
+       ========================================================================== */
+
+    :root, [data-theme="light"] {
+      --bg-main: #f4f5f7;
+      --bg-header: #ffffff;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f8f9fa;
+      --bg-input: #f1f3f5;
+      --border-subtle: #e2e8f0;
+      --border-accent: #cbd5e1;
+
+      --accent-primary: #1e293b;
+      --accent-text: #0f172a;
+      --accent-bg: #e2e8f0;
+
+      --text-heading: #0f172a;
+      --text-body: #334155;
+      --text-muted: #64748b;
+
+      --status-op: #2563eb;
+      --danger-text: #dc2626;
+      --danger-bg: #fef2f2;
+      --warning-text: #d97706;
+      --warning-bg: #fffbeb;
+      --success-text: #166534;
+      --success-bg: #f0fdf4;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-body);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      padding-top: 60px;
+    }
+
+    /* ── BARRA SUPERIOR FIXA NO TOPO ─────────────────────────────────────── */
+    .top-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background-color: var(--bg-header);
+      border-bottom: 1px solid var(--border-subtle);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+    }
+
+    .top-header-inner {
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+      text-decoration: none;
+    }
+
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+      background-color: var(--accent-bg);
+      border: 1px solid var(--border-accent);
+      border-radius: 6px;
+      display: grid;
+      place-items: center;
+      color: var(--text-heading);
+      flex-shrink: 0;
+    }
+
+    .brand-text strong {
+      display: block;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-heading);
+      letter-spacing: -0.2px;
+      line-height: 1.1;
+    }
+
+    .brand-text small {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .centered-nav {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      overflow-x: auto;
+      padding: 2px;
+      scrollbar-width: none;
+    }
+
+    .centered-nav::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-body);
+      text-decoration: none;
+      white-space: nowrap;
+      transition: background-color 0.15s ease, color 0.15s ease;
+    }
+
+    .nav-link:hover {
+      background-color: var(--bg-card-hover);
+      color: var(--text-heading);
+    }
+
+    .nav-link.active {
+      background-color: var(--accent-bg);
+      color: var(--text-heading);
+      border: 1px solid var(--border-accent);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .profile-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 3px 8px 3px 3px;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 999px;
+    }
+
+    .avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background-color: var(--accent-primary);
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 700;
+      display: grid;
+      place-items: center;
+    }
+
+    .profile-info strong {
+      font-size: 11px;
+      color: var(--text-heading);
+      display: block;
+      line-height: 1;
+    }
+
+    .icon-button {
+      width: 32px;
+      height: 32px;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      color: var(--text-body);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: background-color 0.15s ease;
+    }
+
+    .icon-button:hover {
+      background-color: var(--bg-card-hover);
+      color: var(--text-heading);
+    }
+
+    /* ── CONTEÚDO PRINCIPAL ───────────────────────────────────────────────── */
+    .main-wrapper {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .page-title-block {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .page-title-block h1 {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text-heading);
+      letter-spacing: -0.3px;
+    }
+
+    .page-title-block p {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .header-buttons {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-heading);
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--bg-input);
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background-color: var(--accent-primary);
+      color: #ffffff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.15s ease;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.9;
+    }
+
+    /* Cards Status de Integração */
+    .settings-status-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .status-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .status-card-info strong {
+      display: block;
+      font-size: 13px;
+      color: var(--text-heading);
+    }
+
+    .status-card-info small {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .badge.success {
+      background-color: var(--success-bg);
+      color: var(--success-text);
+    }
+
+    .badge.neutral {
+      background-color: var(--bg-input);
+      color: var(--text-muted);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .badge.danger {
+      background-color: var(--danger-bg);
+      color: var(--danger-text);
+    }
+
+    /* Seções de Configuração */
+    .settings-form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .panel {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 22px;
+    }
+
+    .panel-head {
+      margin-bottom: 18px;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 12px;
+    }
+
+    .panel-head h2 {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-heading);
+    }
+
+    .panel-head p {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .settings-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field span {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-heading);
+    }
+
+    .field input, .field select {
+      height: 38px;
+      padding: 0 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border-subtle);
+      background-color: var(--bg-input);
+      color: var(--text-heading);
+      outline: none;
+      font-size: 13px;
+    }
+
+    .field input:focus, .field select:focus {
+      border-color: var(--accent-primary);
+    }
+
+    /* Contrato do Sensor ESP32 */
+    .sensor-contract {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 16px;
+      background-color: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .sensor-contract article {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .sensor-contract strong {
+      font-size: 12px;
+      color: var(--text-heading);
+    }
+
+    .sensor-contract small {
+      font-size: 11px;
+      color: var(--text-muted);
+      display: block;
+    }
+
+    .sensor-contract code, .sensor-contract pre {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-accent);
+      border-radius: 6px;
+      padding: 10px;
+      font-family: monospace;
+      font-size: 11px;
+      color: var(--text-body);
+      overflow-x: auto;
+      white-space: pre-wrap;
+    }
+
+    .integration-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    #connectionFeedback {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    /* Alternadores de Notificação (Toggles) */
+    .toggle-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background-color: var(--bg-input);
+      border-radius: 6px;
+      border: 1px solid var(--border-subtle);
+      cursor: pointer;
+    }
+
+    .toggle-row span strong {
+      display: block;
+      font-size: 13px;
+      color: var(--text-heading);
+    }
+
+    .toggle-row span small {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .toggle-row input[type="checkbox"] {
+      display: none;
+    }
+
+    .toggle-control {
+      width: 42px;
+      height: 24px;
+      background-color: #cbd5e1;
+      border-radius: 999px;
+      position: relative;
+      transition: background-color 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .toggle-control::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 18px;
+      height: 18px;
+      background-color: #ffffff;
+      border-radius: 50%;
+      transition: transform 0.2s ease;
+    }
+
+    .toggle-row input:checked + .toggle-control {
+      background-color: var(--accent-primary);
+    }
+
+    .toggle-row input:checked + .toggle-control::after {
+      transform: translateX(18px);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: var(--accent-primary);
+      color: #ffffff;
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+      z-index: 3000;
+    }
+
+    .toast.show {
+      opacity: 1;
+    }
+
+    @media (max-width: 900px) {
+      .settings-status-grid, .settings-grid, .sensor-contract {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .top-header { padding: 0 12px; }
+      .main-wrapper { padding: 16px 12px; }
+      .page-title-block { flex-direction: column; align-items: flex-start; }
+      .profile-info { display: none; }
+    }
+  </style>
+</head>
+<body data-page="settings" data-auth="true" data-roles="Administrador">
+
+  <!-- BARRA SUPERIOR FIXA UNIFICADA -->
+  <header class="top-header">
+    <div class="top-header-inner">
+      
+      <a class="header-brand" href="../index.html">
+        <div class="brand-icon">
+          <span data-icon="truck"></span>
+        </div>
+        <div class="brand-text">
+          <strong>ECOLLTRUCK</strong>
+          <small>Sustentare Saneamento</small>
+        </div>
+      </a>
+
+      <nav class="centered-nav" aria-label="Menu principal">
+        <a class="nav-link" href="../index.html" data-roles="Administrador">Dashboard</a>
+        <a class="nav-link" href="usuario.html" data-roles="Administrador">Usuários</a>
+        <a class="nav-link" href="caminhoes.html" data-roles="Administrador">Caminhões</a>
+        <a class="nav-link" href="monitoramento.html" data-roles="Administrador,Operador">Monitoramento</a>
+        <a class="nav-link" href="manutencao.html" data-roles="Administrador">Manutenção</a>
+        <a class="nav-link" href="rotas.html" data-roles="Administrador,Motorista">Rotas</a>
+        <a class="nav-link" href="registro-peso.html" data-roles="Administrador,Motorista">Registro de Peso</a>
+        <a class="nav-link" href="bairros.html" data-roles="Administrador">Bairros</a>
+        <a class="nav-link" href="relatorios.html" data-roles="Administrador,Operador">Relatórios</a>
+        <a class="nav-link" href="logs.html" data-roles="Administrador">Logs</a>
+        <a class="nav-link active" href="configuracoes.html" aria-current="page" data-roles="Administrador">Configurações</a>
+      </nav>
+
+      <div class="header-actions">
+        <div class="profile-chip">
+          <span class="avatar">JS</span>
+          <div class="profile-info">
+            <strong>João Silva</strong>
+          </div>
+        </div>
+
+        <button class="icon-button" type="button" data-logout aria-label="Sair">
+          <span data-icon="log-out"></span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ÁREA PRINCIPAL DA PÁGINA -->
+  <main class="main-wrapper">
+    
+    <div class="page-title-block">
+      <div>
+        <h1>Configurações do Sistema</h1>
+        <p>Defina parâmetros operacionais, parâmetros de sincronização e regras de notificação</p>
+      </div>
+
+      <div class="header-buttons">
+        <button class="btn-secondary" type="button" id="resetSettings">
+          <span>Restaurar Padrões</span>
+        </button>
+        <button class="btn-primary" type="submit" form="settingsForm">
+          <span>💾 Salvar Alterações</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- PAINEL DE STATUS -->
+    <section class="settings-status-grid" aria-label="Status das configurações">
+      <article class="status-card">
+        <div class="status-card-info">
+          <strong>Sincronização Local e Nuvem</strong>
+          <small>Parâmetros salvos no navegador e sincronizados no Firebase Realtime Database</small>
+        </div>
+        <span class="badge success">Ativa</span>
+      </article>
+
+      <article class="status-card">
+        <div class="status-card-info">
+          <strong>Integração de Sensores ESP32</strong>
+          <small id="integrationStatusText">Aguardando verificação</small>
+        </div>
+        <span class="badge neutral" id="integrationStatusBadge">Pendente</span>
+      </article>
+    </section>
+
+    <!-- FORMULÁRIO DE CONFIGURAÇÕES -->
+    <form id="settingsForm" class="settings-form">
+      
+      <!-- SEÇÃO 1: DADOS GERAIS -->
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Dados Gerais da Operação</h2>
+          <p>Identificação corporativa utilizada nos relatórios e telas do sistema</p>
+        </div>
+
+        <div class="settings-grid">
+          <label class="field">
+            <span>Nome do Sistema</span>
+            <input id="systemName" type="text" maxlength="40" required>
+          </label>
+          <label class="field">
+            <span>Município / Região</span>
+            <input id="cityName" type="text" maxlength="60" required>
+          </label>
+          <label class="field">
+            <span>Responsável Operacional</span>
+            <input id="operationManager" type="text" maxlength="80" required>
+          </label>
+          <label class="field">
+            <span>Fuso Horário</span>
+            <select id="timezone">
+              <option value="America/Sao_Paulo">Brasília (UTC-3)</option>
+              <option value="America/Manaus">Manaus (UTC-4)</option>
+              <option value="America/Rio_Branco">Rio Branco (UTC-5)</option>
+            </select>
+          </label>
+        </div>
+      </section>
+
+      <!-- SEÇÃO 2: REGRAS DE COLETA -->
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Regras Operacionais e Metas</h2>
+          <p>Limites e faixas de tolerância para acompanhamento de caminhões e peso</p>
+        </div>
+
+        <div class="settings-grid">
+          <label class="field">
+            <span>Meta Diária de Coleta (kg)</span>
+            <input id="dailyTarget" type="number" min="1" max="100000" required>
+          </label>
+          <label class="field">
+            <span>Capacidade Padrão por Caminhão (kg)</span>
+            <input id="truckCapacity" type="number" min="1" max="50000" required>
+          </label>
+          <label class="field">
+            <span>Alerta de Carga Limite (%)</span>
+            <input id="capacityAlert" type="number" min="1" max="100" required>
+          </label>
+          <label class="field">
+            <span>Sensor Considerado Offline Após (min)</span>
+            <input id="offlineMinutes" type="number" min="1" max="120" required>
+          </label>
+        </div>
+      </section>
+
+      <!-- SEÇÃO 3: PARÂMETROS ESP32 & FIREBASE -->
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Integração ESP32 & Firebase</h2>
+          <p>Endereçamentos e formato de payloads para comunicação da telemetria</p>
+        </div>
+
+        <div class="settings-grid">
+          <label class="field">
+            <span>ID do Projeto Firebase</span>
+            <input id="firebaseProjectId" type="text" placeholder="ecolltruck-projeto">
+          </label>
+          <label class="field">
+            <span>URL do Banco Realtime</span>
+            <input id="databaseUrl" type="url" placeholder="https://projeto.firebaseio.com">
+          </label>
+          <label class="field">
+            <span>Identificador de Dispositivo</span>
+            <input id="devicePrefix" type="text" placeholder="ESP32-TRUCK">
+          </label>
+          <label class="field">
+            <span>Intervalo de Telemetria (seg)</span>
+            <input id="syncInterval" type="number" min="5" max="3600">
+          </label>
+        </div>
+
+        <!-- CONTRATO DOS SENSORES -->
+        <div class="sensor-contract">
+          <article>
+            <div>
+              <strong>Caminho de Envio no Realtime Database</strong>
+              <small>Endereço utilizado pelo microcontrolador ESP32</small>
+            </div>
+            <code id="sensorRealtimePath">/latestReadings/truck_02</code>
+            <button class="btn-secondary" type="button" id="copySensorPath" style="height: 32px; font-size: 11px;">
+              <span>Copiar Caminho</span>
+            </button>
+          </article>
+
+          <article>
+            <div>
+              <strong>Modelo de Payload JSON</strong>
+              <small>Estrutura de dados esperada pelo painel de monitoramento</small>
+            </div>
+            <pre id="sensorPayloadExample">{
+  "truckId": "truck_02",
+  "weightKg": 580,
+  "latitude": -12.2577,
+  "longitude": -38.9595,
+  "sensorStatus": "online",
+  "updatedAt": "2026-10-08T10:30:00-03:00"
+}</pre>
+            <button class="btn-secondary" type="button" id="copySensorPayload" style="height: 32px; font-size: 11px;">
+              <span>Copiar JSON</span>
+            </button>
+          </article>
+        </div>
+
+        <div class="integration-actions">
+          <button class="btn-secondary" type="button" id="testConnection">
+            <span>⚡ Testar Conexão</span>
+          </button>
+          <span id="connectionFeedback" role="status"></span>
+        </div>
+      </section>
+
+      <!-- SEÇÃO 4: NOTIFICAÇÕES E ALERTAS -->
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Alertas e Notificações</h2>
+          <p>Escolha quais ocorrências geram alertas sonoros e no painel de controle</p>
+        </div>
+
+        <div class="toggle-list">
+          <label class="toggle-row">
+            <span>
+              <strong>Sensor Sem Resposta (Offline)</strong>
+              <small>Notificar quando um módulo ESP32 deixar de enviar pacotes de telemetria</small>
+            </span>
+            <input id="notifySensorOffline" type="checkbox">
+            <span class="toggle-control" aria-hidden="true"></span>
+          </label>
+
+          <label class="toggle-row">
+            <span>
+              <strong>Capacidade Máxima Atingida</strong>
+              <small>Notificar no painel quando o caminhão ultrapassar a porcentagem configurada</small>
+            </span>
+            <input id="notifyCapacity" type="checkbox">
+            <span class="toggle-control" aria-hidden="true"></span>
+          </label>
+
+          <label class="toggle-row">
+            <span>
+              <strong>Revisões de Manutenção Pendentes</strong>
+              <small>Notificar quando prazos de revisão ou trocas preventivas expirarem</small>
+            </span>
+            <input id="notifyMaintenance" type="checkbox">
+            <span class="toggle-control" aria-hidden="true"></span>
+          </label>
+
+          <label class="toggle-row">
+            <span>
+              <strong>Resumo do Encerramento Diário</strong>
+              <small>Gerar relatório consolidados de peso e rotas no final do expediente</small>
+            </span>
+            <input id="notifyDailySummary" type="checkbox">
+            <span class="toggle-control" aria-hidden="true"></span>
+          </label>
+        </div>
+      </section>
+
+    </form>
+
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- SCRIPTS DO SISTEMA -->
+  <script src="../scripts/firebase.js"></script>
+  <script src="../scripts/app.js"></script>
+  <script src="../scripts/configuracoes.js"></script>
+</body>
+</html>

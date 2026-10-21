@@ -1,0 +1,617 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ECOLLTRUCK - Relatórios Operacionais | Sustentare Saneamento</title>
+  <link rel="stylesheet" href="../styles/style.css">
+  <style>
+    /* ==========================================================================
+       ECOLLTRUCK - DESIGN 
+       ========================================================================== */
+
+    :root, [data-theme="light"] {
+      --bg-main: #f4f5f7;
+      --bg-header: #ffffff;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f8f9fa;
+      --bg-input: #f1f3f5;
+      --border-subtle: #e2e8f0;
+      --border-accent: #cbd5e1;
+
+      --accent-primary: #1e293b;
+      --accent-text: #0f172a;
+      --accent-bg: #e2e8f0;
+
+      --text-heading: #0f172a;
+      --text-body: #334155;
+      --text-muted: #64748b;
+
+      --status-op: #2563eb;
+      --danger-text: #dc2626;
+      --danger-bg: #fef2f2;
+      --warning-text: #d97706;
+      --warning-bg: #fffbeb;
+      --success-text: #166534;
+      --success-bg: #f0fdf4;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-body);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      padding-top: 60px;
+    }
+
+    /* ── BARRA SUPERIOR FIXA NO TOPO ─────────────────────────────────────── */
+    .top-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background-color: var(--bg-header);
+      border-bottom: 1px solid var(--border-subtle);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+    }
+
+    .top-header-inner {
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+      text-decoration: none;
+    }
+
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+      background-color: var(--accent-bg);
+      border: 1px solid var(--border-accent);
+      border-radius: 6px;
+      display: grid;
+      place-items: center;
+      color: var(--text-heading);
+      flex-shrink: 0;
+    }
+
+    .brand-text strong {
+      display: block;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-heading);
+      letter-spacing: -0.2px;
+      line-height: 1.1;
+    }
+
+    .brand-text small {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .centered-nav {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      overflow-x: auto;
+      padding: 2px;
+      scrollbar-width: none;
+    }
+
+    .centered-nav::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-body);
+      text-decoration: none;
+      white-space: nowrap;
+      transition: background-color 0.15s ease, color 0.15s ease;
+    }
+
+    .nav-link:hover {
+      background-color: var(--bg-card-hover);
+      color: var(--text-heading);
+    }
+
+    .nav-link.active {
+      background-color: var(--accent-bg);
+      color: var(--text-heading);
+      border: 1px solid var(--border-accent);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .profile-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 3px 8px 3px 3px;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 999px;
+    }
+
+    .avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background-color: var(--accent-primary);
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 700;
+      display: grid;
+      place-items: center;
+    }
+
+    .profile-info strong {
+      font-size: 11px;
+      color: var(--text-heading);
+      display: block;
+      line-height: 1;
+    }
+
+    .icon-button {
+      width: 32px;
+      height: 32px;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      color: var(--text-body);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: background-color 0.15s ease;
+    }
+
+    .icon-button:hover {
+      background-color: var(--bg-card-hover);
+      color: var(--text-heading);
+    }
+
+    /* ── CONTEÚDO PRINCIPAL ───────────────────────────────────────────────── */
+    .main-wrapper {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .page-title-block {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .page-title-block h1 {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text-heading);
+      letter-spacing: -0.3px;
+    }
+
+    .page-title-block p {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background-color: var(--accent-primary);
+      color: #ffffff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.15s ease;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.9;
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-heading);
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--bg-input);
+    }
+
+    /* Cards Métricas */
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .metric-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .metric-card h3 {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      margin-bottom: 6px;
+    }
+
+    .metric-card strong {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--text-heading);
+      line-height: 1;
+    }
+
+    .metric-card small {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Layout do Form de Filtro e Tabela */
+    .content-grid {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 16px;
+    }
+
+    .panel {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 20px;
+    }
+
+    .panel h2 {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-heading);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .field label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-heading);
+    }
+
+    .field input, .field select {
+      height: 38px;
+      padding: 0 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border-subtle);
+      background-color: var(--bg-input);
+      color: var(--text-heading);
+      outline: none;
+      font-size: 13px;
+    }
+
+    .field input:focus, .field select:focus {
+      border-color: var(--accent-primary);
+    }
+
+    .filter-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th {
+      background-color: var(--bg-input);
+      padding: 10px 14px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: 13px;
+      color: var(--text-body);
+    }
+
+    tr:hover td {
+      background-color: var(--bg-card-hover);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 24px;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: var(--accent-primary);
+      color: #ffffff;
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+      z-index: 3000;
+    }
+
+    .toast.show {
+      opacity: 1;
+    }
+
+    @media print {
+      .top-header, .panel:first-child, .page-title-block button, .page-title-block a {
+        display: none !important;
+      }
+      body {
+        padding-top: 0;
+        background: #fff;
+      }
+      .main-wrapper {
+        padding: 0;
+      }
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 1024px) {
+      .content-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      .top-header { padding: 0 12px; }
+      .main-wrapper { padding: 16px 12px; }
+      .metric-grid { grid-template-columns: 1fr; }
+      .profile-info { display: none; }
+    }
+  </style>
+</head>
+<body data-page="reports" data-auth="true" data-roles="Administrador,Admin,admin,Operador,operador">
+
+  <!-- BARRA SUPERIOR FIXA UNIFICADA -->
+  <header class="top-header">
+    <div class="top-header-inner">
+      
+      <a class="header-brand" href="../index.html">
+        <div class="brand-icon">
+          <span data-icon="truck"></span>
+        </div>
+        <div class="brand-text">
+          <strong>ECOLLTRUCK</strong>
+          <small>Sustentare Saneamento</small>
+        </div>
+      </a>
+
+      <nav class="centered-nav" aria-label="Menu principal">
+        <a class="nav-link" href="../index.html" data-roles="Administrador,Admin,admin">Dashboard</a>
+        <a class="nav-link" href="usuario.html" data-roles="Administrador,Admin,admin">Usuários</a>
+        <a class="nav-link" href="caminhoes.html" data-roles="Administrador,Admin,admin">Caminhões</a>
+        <a class="nav-link" href="monitoramento.html" data-roles="Administrador,Admin,admin,Operador,operador">Monitoramento</a>
+        <a class="nav-link" href="manutencao.html" data-roles="Administrador,Admin,admin">Manutenção</a>
+        <a class="nav-link" href="rotas.html" data-roles="Administrador,Admin,admin,Motorista,motorista">Rotas</a>
+        <a class="nav-link" href="registro-peso.html" data-roles="Administrador,Admin,admin,Motorista,motorista">Registro de Peso</a>
+        <a class="nav-link" href="bairros.html" data-roles="Administrador,Admin,admin">Bairros</a>
+        <a class="nav-link active" href="relatorios.html" aria-current="page" data-roles="Administrador,Admin,admin,Operador,operador">Relatórios</a>
+        <a class="nav-link" href="logs.html" data-roles="Administrador,Admin,admin">Logs</a>
+        <a class="nav-link" href="configuracoes.html" data-roles="Administrador,Admin,admin">Configurações</a>
+      </nav>
+
+      <div class="header-actions">
+        <div class="profile-chip">
+          <span class="avatar">MS</span>
+          <div class="profile-info">
+            <strong>Maria Santos</strong>
+          </div>
+        </div>
+
+        <button class="icon-button" type="button" data-logout aria-label="Sair">
+          <span data-icon="log-out"></span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ÁREA PRINCIPAL DA PÁGINA -->
+  <main class="main-wrapper">
+    
+    <div class="page-title-block">
+      <div>
+        <h1>Relatórios Operacionais</h1>
+        <p>Gere e exporte relatórios consolidados de recolha de resíduos, desempenho de veículos e rotas</p>
+      </div>
+      <button class="btn-primary" id="printReportBtn" type="button">
+        <span>🖨️ Imprimir / Exportar PDF</span>
+      </button>
+    </div>
+
+    <!-- CARDS DE MÉTRICAS -->
+    <section class="metric-grid" aria-label="Resumo do relatório">
+      <article class="metric-card">
+        <h3>Total Acumulado Coletado</h3>
+        <strong id="totalCollectedMetric">0 kg</strong>
+        <small>Volume total registrado no sistema</small>
+      </article>
+
+      <article class="metric-card">
+        <h3>Total de Pesagens</h3>
+        <strong id="totalWeighingsMetric">0</strong>
+        <small>Registros de coleta efetuados</small>
+      </article>
+
+      <article class="metric-card">
+        <h3>Média por Coleta</h3>
+        <strong id="avgPerCollectionMetric">0 kg</strong>
+        <small>Média de peso acumulada</small>
+      </article>
+    </section>
+
+    <!-- PAINEL DE FILTROS E TABELA CONSOLIDADA -->
+    <section class="content-grid">
+      
+      <!-- FORMULÁRIO DE FILTROS -->
+      <article class="panel">
+        <h2> Filtros do Relatório</h2>
+        <form id="reportFilterForm">
+          
+          <div class="field">
+            <label for="filterStartDate">Data Inicial</label>
+            <input id="filterStartDate" type="date">
+          </div>
+
+          <div class="field">
+            <label for="filterEndDate">Data Final</label>
+            <input id="filterEndDate" type="date">
+          </div>
+
+          <div class="field">
+            <label for="filterTruck">Caminhão</label>
+            <select id="filterTruck">
+              <option value="">Todos os caminhões</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="filterRoute">Rota / Bairro</label>
+            <select id="filterRoute">
+              <option value="">Todas as rotas</option>
+            </select>
+          </div>
+
+          <div class="filter-actions">
+            <button class="btn-primary" type="submit" id="applyFilterBtn">
+              <span>Aplicar Filtros</span>
+            </button>
+            <button class="btn-secondary" type="button" id="clearFilterBtn">
+              <span>Limpar Filtros</span>
+            </button>
+          </div>
+
+        </form>
+      </article>
+
+      <!-- TABELA CONSOLIDADA DE DADOS -->
+      <article class="panel">
+        <h2> Registros Consolidados</h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Data / Hora</th>
+                <th>Caminhão</th>
+                <th>Rota de Origem</th>
+                <th>Ponto / Bairro</th>
+                <th>Peso Coletado</th>
+              </tr>
+            </thead>
+            <tbody id="reportTableBody">
+              <!-- Conteúdo inserido dinamicamente via JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <p class="empty-state" id="emptyReportState" hidden>Nenhum registro encontrado para os filtros selecionados.</p>
+      </article>
+
+    </section>
+
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <!-- SCRIPTS DO SISTEMA -->
+  <script src="../scripts/firebase.js"></script>
+  <script src="../scripts/app.js"></script>
+  <script src="../scripts/relatorios.js"></script>
+</body>
+</html>
