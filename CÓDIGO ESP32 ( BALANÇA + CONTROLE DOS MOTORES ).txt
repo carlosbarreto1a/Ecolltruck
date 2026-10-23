@@ -1,0 +1,243 @@
+/* ==========================================================================
+   ECOLLTRUCK 4X4 - FIRMWARE DEFINITIVO (IMPORTE PARA ARDUINO IDE)
+   Controlo de Motores (Impulso + Contínuo) & Telemetria Firebase (HX711)
+   ========================================================================== */
+
+#include <WiFi.h>
+#include <HTTPClient.h>
+#include <WebServer.h>
+#include "HX711.h"
+
+// --------------------------------------------------------------------------
+// 1. CONFIGURAÇÃO DE REDE E NUVEM
+// --------------------------------------------------------------------------
+const char* ssid     = "Barreto_2.4";
+const char* password = "Barreto7925@.";
+
+const String firebaseUrlLatest = "https://ecolltruck-senai-default-rtdb.firebaseio.com/latestReadings/truck_02.json";
+const String firebaseUrlTruck  = "https://ecolltruck-senai-default-rtdb.firebaseio.com/trucks/truck_02.json";
+
+// --------------------------------------------------------------------------
+// 2. HARDWARE: MOTORES (PONTE H L298N)
+// --------------------------------------------------------------------------
+const int IN1 = 16; // Motor Traseiro - Polo 1
+const int IN2 = 17; // Motor Traseiro - Polo 2
+const int IN3 = 5;  // Motor Dianteiro - Polo 1
+const int IN4 = 18; // Motor Dianteiro - Polo 2
+
+const int TEMPO_PULSO_MS = 120; // Duração do toque rápido no modo impulso
+bool motorEmMovimento = false;
+
+// --------------------------------------------------------------------------
+// 3. HARDWARE: BALANÇA (MÓDULO HX711)
+// --------------------------------------------------------------------------
+const int HX711_DOUT = 19; // Pino DT
+const int HX711_SCK  = 21; // Pino SCK
+
+HX711 scale;
+float pesoKg = 0.0;
+
+// CALIBRAÇÃO: Se a balança indicar valor diferente do peso real, 
+// altere o fator abaixo (Ex: se indicar o dobro, divida o valor por 2).
+float fatorCalibracao = 2280.0; 
+
+// Timers assíncronos (evita o uso de delay no loop)
+unsigned long ultimoTempoBalanca = 0;
+const unsigned long intervaloBalanca = 200; 
+
+unsigned long ultimoTempoCloud = 0;
+const unsigned long intervaloCloud = 1200; 
+
+WebServer server(80);
+
+// --------------------------------------------------------------------------
+// 4. FUNÇÕES DE CONTROLO FÍSICO DOS MOTORES
+// --------------------------------------------------------------------------
+
+// Corte total e imediato de energia
+void pararMotores() {
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, LOW);
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, LOW);
+  motorEmMovimento = false;
+}
+
+// Acionamento em modo contínuo (permanece ligado até mandar parar)
+void LigarContinuo(int in1, int in2, int in3, int in4) {
+  digitalWrite(IN1, in1 ? HIGH : LOW);
+  digitalWrite(IN2, in2 ? HIGH : LOW);
+  digitalWrite(IN3, in3 ? HIGH : LOW);
+  digitalWrite(IN4, in4 ? HIGH : LOW);
+  motorEmMovimento = true;
+}
+
+// Acionamento em modo impulso (dá um toque rápido de 120ms e desliga)
+void executarPulso(int in1, int in2, int in3, int in4) {
+  digitalWrite(IN1, in1 ? HIGH : LOW);
+  digitalWrite(IN2, in2 ? HIGH : LOW);
+  digitalWrite(IN3, in3 ? HIGH : LOW);
+  digitalWrite(IN4, in4 ? HIGH : LOW);
+  
+  delay(TEMPO_PULSO_MS);
+  
+  pararMotores();
+}
+
+// --------------------------------------------------------------------------
+// 5. ENVIO DE DADOS PARA O FIREBASE
+// --------------------------------------------------------------------------
+void sincronizarFirebase() {
+  if (WiFi.status() == WL_CONNECTED) {
+    HTTPClient http;
+    http.setTimeout(100);
+    
+    String jsonPayload = "{\"peso\":" + String(pesoKg, 2) + 
+                         ",\"weight\":" + String(pesoKg, 2) + 
+                         ",\"weightKg\":" + String(pesoKg, 2) + 
+                         ",\"sensorStatus\":\"online\"" +
+                         ",\"truckId\":\"truck_02\"}";
+    
+    // Atualiza leitor principal
+    http.begin(firebaseUrlLatest);
+    http.addHeader("Content-Type", "application/json");
+    http.PATCH(jsonPayload);
+    http.end();
+
+    // Atualiza histórico do caminhão
+    http.begin(firebaseUrlTruck);
+    http.addHeader("Content-Type", "application/json");
+    http.PATCH(jsonPayload);
+    http.end();
+  }
+}
+
+// --------------------------------------------------------------------------
+// 6. INTERFACE WEB LOCAL (PAINEL DE CONTROLO SIMPLES)
+// --------------------------------------------------------------------------
+void handleRoot() {
+  String html = "<!DOCTYPE html><html lang='pt-BR'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=no'>";
+  html += "<title>ECOLLTRUCK</title>";
+  html += "<style>";
+  html += "* { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }";
+  html += "body { font-family: system-ui, sans-serif; text-align: center; background-color: #000000; color: #ffffff; padding: 15px; margin: 0; }";
+  html += "h1 { font-size: 28px; letter-spacing: 2px; margin-top: 10px; margin-bottom: 20px; text-transform: uppercase; font-weight: 900; }";
+  html += ".btn { display: block; width: 100%; max-width: 320px; margin: 8px auto; padding: 15px; font-size: 15px; border: 2px solid #ffffff; border-radius: 6px; background: #000000; color: #ffffff; font-weight: bold; cursor: pointer; text-transform: uppercase; }";
+  html += ".btn:active { background: #ffffff; color: #000000; }";
+  html += ".btn-continuo { border-color: #38bdf8; color: #38bdf8; }";
+  html += ".btn-continuo:active { background: #38bdf8; color: #000000; }";
+  html += ".btn-pare { border-color: #ef4444; color: #ffffff; background: #dc2626; font-size: 18px; padding: 18px; margin-top: 20px; }";
+  html += ".btn-pare:active { background: #ffffff; color: #dc2626; }";
+  html += ".secao { font-size: 11px; color: #888888; margin-top: 14px; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; }";
+  html += "</style></head><body>";
+  
+  html += "<h1>ECOLLTRUCK 4X4</h1>";
+  
+  html += "<div class='secao'>Movimento por Impulso (Toque Único)</div>";
+  html += "<button class='btn' onclick='cmd(\"/frente_pulso\")'>▲ FRENTE (IMPULSO)</button>";
+  html += "<button class='btn' onclick='cmd(\"/tras_pulso\")'>▼ RÉ (IMPULSO)</button>";
+
+  html += "<div class='secao'>Movimento Contínuo (Direto)</div>";
+  html += "<button class='btn btn-continuo' onclick='cmd(\"/frente_continuo\")'>▲▲ FRENTE (CONTÍNUO)</button>";
+  html += "<button class='btn btn-continuo' onclick='cmd(\"/tras_continuo\")'>▼▼ RÉ (CONTÍNUO)</button>";
+  
+  html += "<div class='secao'>Eixos Separados</div>";
+  html += "<button class='btn' onclick='cmd(\"/dianteiro\")'>↑ APENAS DIANTEIRO</button>";
+  html += "<button class='btn' onclick='cmd(\"/traseiro\")'>↓ APENAS TRASEIRO</button>";
+  
+  html += "<button class='btn btn-pare' onclick='cmd(\"/parar\")'>🛑 PARAR TUDO</button>";
+  
+  html += "<script>";
+  html += "function cmd(path) { fetch(path, { cache: 'no-store' }); }";
+  html += "</script>";
+
+  html += "</body></html>";
+  server.send(200, "text/html", html);
+}
+
+// --------------------------------------------------------------------------
+// 7. ROTAS DE ATENDIMENTO DAS REQUISIÇÕES
+// --------------------------------------------------------------------------
+void handleFrentePulso()    { executarPulso(0, 1, 0, 1);    server.send(200, "text/plain", "OK"); }
+void handleTrasPulso()      { executarPulso(1, 0, 1, 0);    server.send(200, "text/plain", "OK"); }
+void handleFrenteContinuo() { LigarContinuo(0, 1, 0, 1);    server.send(200, "text/plain", "OK"); }
+void handleTrasContinuo()   { LigarContinuo(1, 0, 1, 0);    server.send(200, "text/plain", "OK"); }
+void handleDianteiro()      { LigarContinuo(0, 0, 0, 1);    server.send(200, "text/plain", "OK"); }
+void handleTraseiro()       { LigarContinuo(0, 1, 0, 0);    server.send(200, "text/plain", "OK"); }
+void handleParar()          { pararMotores();               server.send(200, "text/plain", "OK"); }
+
+// --------------------------------------------------------------------------
+// 8. SETUP (INICIALIZAÇÃO DO SISTEMA)
+// --------------------------------------------------------------------------
+void setup() {
+  Serial.begin(115200);
+
+  // Configuração dos pinos digitais de saída
+  pinMode(IN1, OUTPUT); 
+  pinMode(IN2, OUTPUT);
+  pinMode(IN3, OUTPUT); 
+  pinMode(IN4, OUTPUT);
+  pararMotores();
+
+  // Inicialização e calibração da balança
+  scale.begin(HX711_DOUT, HX711_SCK);
+  scale.set_scale(fatorCalibracao);
+  scale.tare(); // Zera o valor residual inicial da célula de carga
+
+  // Conexão à rede Wi-Fi local
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(ssid, password);
+
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(200);
+    Serial.print(".");
+  }
+
+  Serial.println("\n[SISTEMA] Conectado à rede!");
+  Serial.print("[SISTEMA] IP local do ESP32: ");
+  Serial.println(WiFi.localIP());
+
+  // Mapeamento dos endpoints HTTP
+  server.on("/", handleRoot);
+  server.on("/frente_pulso", handleFrentePulso);
+  server.on("/tras_pulso", handleTrasPulso);
+  server.on("/frente_continuo", handleFrenteContinuo);
+  server.on("/tras_continuo", handleTrasContinuo);
+  server.on("/dianteiro", handleDianteiro);
+  server.on("/traseiro", handleTraseiro);
+  server.on("/parar", handleParar);
+  
+  server.begin();
+}
+
+// --------------------------------------------------------------------------
+// 9. LOOP PRINCIPAL (EXECUÇÃO CONTÍNUA)
+// --------------------------------------------------------------------------
+void loop() {
+  server.handleClient(); // Processa requisições dos botões instantaneamente
+
+  unsigned long tempoAtual = millis();
+
+  // Leitura com filtro de ruído e trava de zero absoluto
+  if (tempoAtual - ultimoTempoBalanca >= intervaloBalanca) {
+    ultimoTempoBalanca = tempoAtual;
+    
+    if (scale.is_ready()) {
+      float leituraBruta = scale.get_units(1);
+      
+      // Filtro de banda morta: se estiver entre -40g e +40g, trava em 0.00 kg
+      if (leituraBruta > -0.04 && leituraBruta < 0.04) {
+        pesoKg = 0.00;
+      } else {
+        // Média móvel exponencial para estabilizar o valor lido
+        pesoKg = (pesoKg * 0.6) + (leituraBruta * 0.4);
+      }
+    }
+  }
+
+  // Envio periódico dos dados para o banco do Firebase
+  if (tempoAtual - ultimoTempoCloud >= intervaloCloud) {
+    ultimoTempoCloud = tempoAtual;
+    sincronizarFirebase();
+  }
+}
