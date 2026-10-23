@@ -1,0 +1,93 @@
+/*
+ * SISTEMA DE RÉ PARA O CAMINHÃO DO PROJETO ECOLLTRUCK
+ * Descrição: SISTEMA DE BUZINA, SISTEMA DE PROXIMIDADE E SISTEMA DE LED.
+ * Quanto mais perto o obstáculo, mais rápido apita e pisca.
+ */
+
+// Pinos dos componentes
+const int TRIG_PIN = 2;
+const int ECHO_PIN = 3;
+const int BUZZER_PIN = 4;
+const int LED_PIN = 8;
+
+// Controle do ritmo de pisca/bip sem travar o processamento
+unsigned long ultimoAlerta = 0;
+bool estadoAlerta = false;
+
+void setup() {
+  // Configuração da direção dos pinos
+  pinMode(TRIG_PIN, OUTPUT);
+  pinMode(ECHO_PIN, INPUT);
+  pinMode(BUZZER_PIN, OUTPUT);
+  pinMode(LED_PIN, OUTPUT);
+  
+  // Estado inicial: tudo desligado
+  noTone(BUZZER_PIN);
+  digitalWrite(LED_PIN, LOW);
+  
+  // Monitor Serial para depuração
+  Serial.begin(9600);
+}
+
+void loop() {
+  // BLOCO 1: Envia o pulso e calcula a distância em centímetros
+  digitalWrite(TRIG_PIN, LOW);
+  delayMicroseconds(4);
+  digitalWrite(TRIG_PIN, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG_PIN, LOW);
+  
+  long duracao = pulseIn(ECHO_PIN, HIGH, 25000); 
+  int distancia = duracao * 0.034 / 2;
+
+  // BLOCO 2: Condição de segurança - desliga tudo se estiver fora do alcance (2cm a 40cm)
+  if (distancia < 2 || distancia > 40) {
+    noTone(BUZZER_PIN);
+    digitalWrite(LED_PIN, LOW);
+    
+    Serial.print("Distancia: ");
+    Serial.print(distancia);
+    Serial.println(" cm -> DESLIGADO (Fora do alcance)");
+    
+    delay(100);
+    return;
+  }
+
+  // BLOCO 3: Define o intervalo do bip/pisca de acordo com a proximidade
+  Serial.print("Distancia: ");
+  Serial.print(distancia);
+  Serial.println(" cm -> ALERTA ATIVADO!");
+
+  int tempoEspera = 0;
+
+  if (distancia <= 8) {
+    tempoEspera = 0;   // Menos de 8cm: Bip e LEDs contínuos (alerta máximo)
+  } else if (distancia <= 18) {
+    tempoEspera = 70;  // 9cm a 18cm: Ritmo rápido
+  } else if (distancia <= 40) {
+    tempoEspera = 250; // 19cm a 40cm: Ritmo médio
+  }
+
+  // BLOCO 4: Acionamento sincronizado do Buzzer e dos LEDs usando millis()
+  unsigned long tempoAtual = millis();
+
+  if (tempoEspera == 0) {
+    tone(BUZZER_PIN, 3000);
+    digitalWrite(LED_PIN, HIGH);
+  } else {
+    if (tempoAtual - ultimoAlerta >= tempoEspera) {
+      ultimoAlerta = tempoAtual;
+      estadoAlerta = !estadoAlerta;
+
+      if (estadoAlerta) {
+        tone(BUZZER_PIN, 3000);
+        digitalWrite(LED_PIN, HIGH);
+      } else {
+        noTone(BUZZER_PIN);
+        digitalWrite(LED_PIN, LOW);
+      }
+    }
+  }
+
+  delay(30);
+}
